@@ -1,13 +1,16 @@
 import torch.nn as nn
 
-class Diffeomorphism(nn.Module): # TODO we have 5 arguments for the construction: 1) z, 2) O, 3) phi_theta, 4) psi, 5) manifold and the class should implement the differentials and stuff
-    """ Base class describing a diffeomorphism phi: R^d \to M """
+class Diffeomorphism(nn.Module):
+    """ Base class describing a diffeomorphism varphi: R^d \to M  of the form varphi = psi^{-1} o phi o O o T_z"""
 
-    def __init__(self, embedding_manifold):
+    def __init__(self, offset, orthogonal, deformation, chart, embedding_manifold):
         super(Diffeomorphism, self).__init__()
-        self.manifold = embedding_manifold
-        self.d = self.manifold.d
-        self.diffeo = None
+        self.z = offset
+        self.O = orthogonal
+        self.phi = deformation
+        self.psi_inverse = chart
+        self.M = embedding_manifold
+        self.d = self.M.d
 
     def forward(self, x):
         raise NotImplementedError(
