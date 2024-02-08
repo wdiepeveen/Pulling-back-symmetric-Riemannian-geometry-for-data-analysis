@@ -4,12 +4,12 @@ import torch.autograd.forward_ad as fwAD
 from src.diffeomorphisms import Diffeomorphism
 from src.manifolds.product_manifold import ProductManifold
 from src.manifolds.euclidean import Euclidean
-from src.utils.iresnet import i_ResNet
+from src.diffeomorphisms.simple_diffeomorphisms.iresnet import i_ResNet
 
 class i_ResNet_into_Euclidean(Diffeomorphism):
     def __init__(self, d, offset, orthogonal, nBlocks=50, max_iter_inverse=100, int_features=10, coeff=.97,
                  n_power_iter=5):
-        super().__init__(offset, orthogonal, None, None, ProductManifold([Euclidean(d[0]), Euclidean(d[1])]))
+        super().__init__(ProductManifold([Euclidean(d[0]), Euclidean(d[1])]), offset=offset, orthogonal=orthogonal)
 
         self.d0 = d[0]
         self.d1 = d[1]
@@ -17,22 +17,37 @@ class i_ResNet_into_Euclidean(Diffeomorphism):
         self.phi = i_ResNet(self.d, nBlocks=nBlocks, int_features=int_features, coeff=coeff, n_power_iter=n_power_iter)
         self.max_iter_inverse = max_iter_inverse
 
-    def forward(self, x):  # TODO
+    def forward(self, x):
         """
-        :param x: N x d
-        :return: [N x d0, N x d1]
+        :param x: N x d or N x M x d
+        :return: [N x d0, N x d1] or [N x M x d0, N x M x d1]
         """
-        fwd = self.net(x - self.offset)
+        if len(x.shape) == 2:
+            fwd = self.phi(torch.einsum("ij,Nj->Ni", self.O, x - self.z[None]))
+        elif len(x.shape) == 3:
+            fwd = self.phi(torch.einsum("ij,NMj->NMi", self.O, x - self.z[None,None]))
+        else:
+            raise NotImplementedError(
+                "len(x.shape) is not 2 nor 3"
+            )
         return [fwd.T.split([self.d0, self.d1])[0].T, fwd.T.split([self.d0, self.d1])[1].T]
 
-    def inverse(self, p):  # TODO
+    def inverse(self, p):
         """
         :param p: [N x d0, N x d1]
         :return: N x d
         """
-        return self.net.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse) + self.offset
+        if len(p.shape[0]) == len(p.shape[1]) == 2:
+            inv = torch.einsum("ij,Nj->Ni", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None]
+        elif len(p.shape[0]) == len(p.shape[1]) == 3:
+            inv = torch.einsum("ij,NMj->NMi", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None,None]
+        else:
+            raise NotImplementedError(
+                "len(x.shape) is not 2 nor 3"
+            )
+        return inv
 
-    def differential_forward(self, x, X):  # TODO
+    def differential_forward(self, x, X):
         """
         :param x: N x d
         :param X: N x M x d
@@ -47,14 +62,14 @@ class i_ResNet_into_Euclidean(Diffeomorphism):
             for l in range(L):
                 tangent = tangents.T[:, l].T
                 dual_input = fwAD.make_dual(primal, tangent)
-                dual_output = self.net.forward(dual_input)
+                dual_output = self.forward(dual_input)
                 differential = fwAD.unpack_dual(dual_output).tangent
                 output[:, l] = differential.T
         D_x_forward_X = output.T
 
         return [D_x_forward_X.T.split([self.d0, self.d1])[0].T, D_x_forward_X.T.split([self.d0, self.d1])[1].T]
 
-    def differential_inverse(self, p, P):  # TODO
+    def differential_inverse(self, p, P):
         """
         :param p: [N x d0, N x d1]
         :param P: [N x M x d0, N x M x d1]
@@ -69,7 +84,7 @@ class i_ResNet_into_Euclidean(Diffeomorphism):
             for l in range(L):
                 tangent = tangents.T[:, l].T
                 dual_input = fwAD.make_dual(primal, tangent)
-                dual_output = self.net.inverse(dual_input, maxIter=self.max_iter_inverse)
+                dual_output = self.inverse(dual_input)
                 differential = fwAD.unpack_dual(dual_output).tangent
                 output[:, l] = differential.T
         D_p_inverse_P = output.T

@@ -4,7 +4,7 @@ class PullBackManifold(Manifold):
     """ Base class describing a learned manifold of dimension `d` """
 
     def __init__(self, diffeo):
-        self.manifold = diffeo.manifold
+        self.manifold = diffeo.M
         self.diffeo = diffeo
         super().__init__(self.manifold.d)
 
@@ -38,3 +38,6 @@ class PullBackManifold(Manifold):
 
     def manifold_dimension(self):
         return self.d
+
+    def metric_tensor_in_std_basis(self):
+        return 5  # TODO

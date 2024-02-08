@@ -1,8 +1,9 @@
 import torch.nn as nn
 
-from src.utils.iresnet.iresnet_block import iresnet_block
+from src.diffeomorphisms.simple_diffeomorphisms import SimpleDiffeomorphism
+from src.diffeomorphisms.simple_diffeomorphisms.iresnet.iresnet_block import iresnet_block
 
-class i_ResNet(nn.Module):
+class i_ResNet(SimpleDiffeomorphism):
     def __init__(self, in_features, nBlocks=50, int_features=10, coeff=.97, n_power_iter=5, nonlin="elu"):
         super(i_ResNet, self).__init__()
 

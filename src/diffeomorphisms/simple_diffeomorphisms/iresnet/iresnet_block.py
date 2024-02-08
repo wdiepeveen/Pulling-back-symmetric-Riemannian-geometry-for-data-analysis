@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from src.utils.iresnet.spectral_norm_fc import spectral_norm_fc
+from src.diffeomorphisms.simple_diffeomorphisms.iresnet.spectral_norm_fc import spectral_norm_fc
 
 class iresnet_block(nn.Module):
     def __init__(self, in_features, int_features=10, coeff=.97, n_power_iter=5, nonlin="elu"):
