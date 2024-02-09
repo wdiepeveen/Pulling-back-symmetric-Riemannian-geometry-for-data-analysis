@@ -36,7 +36,7 @@ class ProductManifold(Manifold):
             pp = []
             XX = []
             YY = []
-            for i in range(self.n):
+            for i in range(self.n):  # TODO we have to account for that the Mpoint can have shape len > 1
                 pp.append(p[i].reshape(-1, self.di[i]))
                 XX.append(X[i].reshape(-1, X.shape[-2], X.shape[-1]))
                 YY.append(Y[i].reshape(-1, Y.shape[-2], Y.shape[-1]))

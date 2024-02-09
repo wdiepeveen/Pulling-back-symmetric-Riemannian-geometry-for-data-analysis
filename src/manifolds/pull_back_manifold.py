@@ -1,3 +1,5 @@
+import torch
+
 from src.manifolds import Manifold
 
 class PullBackManifold(Manifold):
@@ -39,5 +41,11 @@ class PullBackManifold(Manifold):
     def manifold_dimension(self):
         return self.d
 
-    def metric_tensor_in_std_basis(self):
-        return 5  # TODO
+    def metric_tensor_in_std_basis(self, p):
+        """
+
+        :param p: N x d
+        :return: N x d x d
+        """
+        N = p.shape[0]
+        return self.manifold.inner(p, torch.eye(self.d,self.d)[None].repeat(N, 1, 1), torch.eye(self.d,self.d)[None].repeat(N, 1, 1))
