@@ -48,4 +48,4 @@ class PullBackManifold(Manifold):
         :return: N x d x d
         """
         N = p.shape[0]
-        return self.manifold.inner(p, torch.eye(self.d,self.d)[None].repeat(N, 1, 1), torch.eye(self.d,self.d)[None].repeat(N, 1, 1))
+        return self.inner(p, torch.eye(self.d,self.d)[None].repeat(N, 1, 1), torch.eye(self.d,self.d)[None].repeat(N, 1, 1))
