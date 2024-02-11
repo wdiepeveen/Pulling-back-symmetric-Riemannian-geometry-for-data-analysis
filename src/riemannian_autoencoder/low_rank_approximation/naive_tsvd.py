@@ -11,7 +11,7 @@ def naive_low_rank_approximation(M, x, X, rank):
     """
     n = X.shape[0]
     # compute log
-    log_x_X = M.log(x[None], X[None])[0]  # ∈ T_x M^n
+    log_x_X = M.log(x[None] * torch.ones((n,1)), X[:,None])[:,0]  # ∈ T_x M^n
     # tangent space SVD
     r = min(n, M.d, rank)
     # compute Gram matrix

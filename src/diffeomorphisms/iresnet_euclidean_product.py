@@ -35,19 +35,31 @@ class i_ResNet_into_Euclidean(Diffeomorphism):
         else:
             return fwd
 
-    def inverse(self, p):
+    def inverse(self, p, asproduct=True):
         """
         :param p: [N x d0, N x d1]
         :return: N x d
         """
-        if len(p[0].shape) == len(p[1].shape) == 2:
-            inv = torch.einsum("ij,Nj->Ni", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None]
-        elif len(p[0].shape) == len(p[1].shape) == 3:
-            inv = torch.einsum("ij,NMj->NMi", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None,None]
+        if asproduct:
+            if len(p[0].shape) == len(p[1].shape) == 2:
+                inv = torch.einsum("ij,Nj->Ni", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None]
+            elif len(p[0].shape) == len(p[1].shape) == 3:
+                inv = torch.einsum("ij,NMj->NMi", self.O.T, self.phi.inverse(torch.cat(p, -1), maxIter=self.max_iter_inverse)) + self.z[None,None]
+            else:
+                raise NotImplementedError(
+                    "len(x.shape) is not 2 nor 3"
+                )
         else:
-            raise NotImplementedError(
-                "len(x.shape) is not 2 nor 3"
-            )
+            if len(p.shape) == 2:
+                inv = torch.einsum("ij,Nj->Ni", self.O.T,
+                                   self.phi.inverse(p, maxIter=self.max_iter_inverse)) + self.z[None]
+            elif len(p.shape) == 3:
+                inv = torch.einsum("ij,NMj->NMi", self.O.T, self.phi.inverse(p, maxIter=self.max_iter_inverse)) + self.z[None, None]
+
+            else:
+                raise NotImplementedError(
+                    "len(x.shape) is not 2 nor 3"
+                )
         return inv
 
     def differential_forward(self, x, X):
@@ -87,7 +99,7 @@ class i_ResNet_into_Euclidean(Diffeomorphism):
             for l in range(L):
                 tangent = tangents.T[:, l].T
                 dual_input = fwAD.make_dual(primal, tangent)
-                dual_output = self.inverse(dual_input)
+                dual_output = self.inverse(dual_input, asproduct=False)
                 differential = fwAD.unpack_dual(dual_output).tangent
                 output[:, l] = differential.T
         D_p_inverse_P = output.T

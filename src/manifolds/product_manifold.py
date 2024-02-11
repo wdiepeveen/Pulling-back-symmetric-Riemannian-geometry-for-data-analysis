@@ -20,6 +20,20 @@ class ProductManifold(Manifold):
         super().__init__(d)
         self.di = di
 
+    def barycentre(self, p, tol=1e-3, max_iter=20):
+        """
+
+        :param p: [N x M x d1, ..., N x M x dn]
+        :param tol:
+        :param max_iter:
+        :return: [N x d1, ..., N x dn]
+        """
+        barys = []
+        for i in range(self.n):
+            barys.append(self.manifolds[i].barycentre(p[i], tol=1e-3, max_iter=20))
+        return barys
+
+
     def inner(self, p, X, Y):
         """
 
@@ -38,8 +52,8 @@ class ProductManifold(Manifold):
             YY = []
             for i in range(self.n):  # TODO we have to account for that the Mpoint can have shape len > 1
                 pp.append(p[i].reshape(-1, self.di[i]))
-                XX.append(X[i].reshape(-1, X.shape[-2], X.shape[-1]))
-                YY.append(Y[i].reshape(-1, Y.shape[-2], Y.shape[-1]))
+                XX.append(X[i].reshape(-1, X[i].shape[-2], X[i].shape[-1]))
+                YY.append(Y[i].reshape(-1, Y[i].shape[-2], Y[i].shape[-1]))
             return self.inner(pp, XX, YY).reshape(p[0].shape[:-1], X[0].shape[-2], Y[0].shape[-2])
         else:
             return sum([self.manifolds[i].inner(p[i], X[i], Y[i]) for i in range(self.n)])

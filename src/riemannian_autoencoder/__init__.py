@@ -16,7 +16,8 @@ class Curvature_Corrected_Riemannian_Autoencoder:
         :param x: N x d tensor
         :return : N x k tensor
         """
-        log_z_x = self.M.log(self.z[None], x[None])
+        N = x.shape[0]
+        log_z_x = self.M.log(self.z[None] * torch.ones((N,1)), x[:,None])[:,0][None]
         latent_coefficients = self.M.inner(self.z[None], log_z_x, self.w_z[:, None])[0]
         return latent_coefficients
 
@@ -25,8 +26,9 @@ class Curvature_Corrected_Riemannian_Autoencoder:
         :param a: N x k tensor
         :return : N x d tensor
         """
+        N = a.shape[0]
         Xi_z = torch.einsum("Nk,kd->Nd", a, self.w_z)
-        exp_Xi_z = self.M.exp(self.z[None], Xi_z[None])[0]
+        exp_Xi_z = self.M.exp(self.z[None] * torch.ones((N,1)), Xi_z[:,None])[:,0]
         return exp_Xi_z
 
     def project_on_manifold(self, x):

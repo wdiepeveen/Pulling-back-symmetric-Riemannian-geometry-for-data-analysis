@@ -9,6 +9,16 @@ class Euclidean(Manifold):
         super().__init__(d)
         self.a = a
 
+    def barycentre(self, x, tol=1e-3, max_iter=20):
+        """
+
+        :param x: N x M x d
+        :param tol:
+        :param max_iter:
+        :return: N x d
+        """
+        return torch.mean(x, -2)
+
     def inner(self, p, X, Y):
         """
 
