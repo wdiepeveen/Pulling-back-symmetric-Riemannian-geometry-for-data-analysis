@@ -13,11 +13,13 @@ class Manifold:
         :return: N x Mpoint
         """
         k = 0
-        rel_error = 1.
         y = x[:,0]
+        error = self.norm(y, torch.mean(self.log(y, x),1).unsqueeze(-2))
+        rel_error = 1.
         while k <= max_iter and rel_error >= tol:
             y = self.exp(y, torch.mean(self.log(y, x),1).unsqueeze(-2)).squeeze(-2)
             k+=1
+            rel_error = self.norm(y, torch.mean(self.log(y, x),1).unsqueeze(-2)) / error
 
         return y
 
@@ -33,8 +35,8 @@ class Manifold:
         :param X: N x M x Mpoint
         :return: N x M
         """
-        return torch.sqrt(self.inner(p.unsqueeze(-2) * torch.ones((1, X.shape[-2], 1)),
-                                     X.unsqueeze(-2), X.unsqueeze(-2)).squeeze(-2))
+        return torch.sqrt(torch.abs(self.inner(p.unsqueeze(-2) * torch.ones((1, X.shape[-2], 1)),
+                                     X.unsqueeze(-2), X.unsqueeze(-2)).squeeze(-2)))
 
     def distance(self, p, q):
         raise NotImplementedError(

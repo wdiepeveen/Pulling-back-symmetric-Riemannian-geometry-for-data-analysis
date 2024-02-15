@@ -48,7 +48,7 @@ class Hyperboloid(Manifold):
         :return: N x M x (d + 1)
         """
         assert (len(p.shape) + 1) == len(q.shape)
-        X = q + self.minkowski_metric(p.unsqueeze(-2), q).squeeze(-3).unsqueeze(-1) * p.unsqueeze(-2)
+        X = q + self.minkowski_metric(p.unsqueeze(-2), q).squeeze(-2).unsqueeze(-1) * p.unsqueeze(-2)
         d_pq = self.distance(q, p[:,None])
         return d_pq * X / (self.norm(p, X).unsqueeze(-1) + 1e-8)
 
