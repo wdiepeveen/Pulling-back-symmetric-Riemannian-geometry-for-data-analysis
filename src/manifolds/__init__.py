@@ -6,7 +6,7 @@ class Manifold:
     def __init__(self, d):
         self.d = d
 
-    def barycentre(self, x, tol=1e-3, max_iter=20):
+    def barycentre(self, x, tol=1e-3, max_iter=50):
         """
 
         :param x: N x M x Mpoint
@@ -20,6 +20,8 @@ class Manifold:
             y = self.exp(y, torch.mean(self.log(y, x),1).unsqueeze(-2)).squeeze(-2)
             k+=1
             rel_error = self.norm(y, torch.mean(self.log(y, x),1).unsqueeze(-2)) / error
+
+        print(f"gradient descent was terminated after reaching a relative error {rel_error.item()} in {k} iterations")
 
         return y
 

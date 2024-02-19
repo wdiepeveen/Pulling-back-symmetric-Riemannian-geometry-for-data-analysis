@@ -68,7 +68,8 @@ class Sphere(Manifold):
         """
         assert (len(p.shape) + 1) == len(X.shape)
         X_norm = torch.norm(X,2,-1).unsqueeze(-1) + 1e-8
-        return torch.cos(X_norm) * p.unsqueeze(-2) + torch.sin(X_norm) * X / X_norm
+        y = torch.cos(X_norm) * p.unsqueeze(-2) + torch.sin(X_norm) * X / X_norm
+        return y / torch.norm(y,2,-1).unsqueeze(-1)
 
     def parallel_transport(self, p, X, q):
         """
