@@ -30,10 +30,10 @@ if __name__ == "__main__":
                         help='first beta in Adam optimiser')
     parser.add_argument('--beta_b', type=float, default=0.99,
                         help='second beta in Adam optimiser')
-    parser.add_argument('--weight_decay', type=float, default=1e-10,
-                        help='weight decay')
-    parser.add_argument('--log', type=eval, default=True,
-                        help='logging flag')
+    # parser.add_argument('--weight_decay', type=float, default=1e-10,
+    #                     help='weight decay')
+    # parser.add_argument('--log', type=eval, default=True,
+    #                     help='logging flag')
     parser.add_argument('--seed', type=int, default=31,
                         help='Random seed')
     parser.add_argument('--val_interval', type=int, default=5, metavar='N',
