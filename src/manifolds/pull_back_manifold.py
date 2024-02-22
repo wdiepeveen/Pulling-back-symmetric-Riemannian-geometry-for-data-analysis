@@ -10,8 +10,11 @@ class PullBackManifold(Manifold):
         self.diffeo = diffeo
         super().__init__(self.manifold.d)
 
-    def barycentre(self, p, tol=1e-3, max_iter=200):
-        return self.diffeo.inverse(self.manifold.barycentre(self.diffeo.forward(p), tol=tol, max_iter=max_iter))
+    def barycentre(self, p, tol=1e-3, max_iter=200, initialisation=None):
+        if initialisation is None:
+            return self.diffeo.inverse(self.manifold.barycentre(self.diffeo.forward(p), tol=tol, max_iter=max_iter, initialisation=None))
+        else:
+            return self.diffeo.inverse(self.manifold.barycentre(self.diffeo.forward(p), tol=tol, max_iter=max_iter, initialisation=self.diffeo.forward(initialisation)))
 
     def inner(self, p, X, Y):
         return self.manifold.inner(self.diffeo.forward(p),

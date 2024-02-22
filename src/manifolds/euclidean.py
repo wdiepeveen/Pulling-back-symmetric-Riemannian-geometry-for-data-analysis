@@ -9,7 +9,7 @@ class Euclidean(Manifold):
         super().__init__(d)
         self.a = a
 
-    def barycentre(self, x, tol=1e-3, max_iter=20):
+    def barycentre(self, x, tol=1e-3, max_iter=20, initialisation=None):
         """
 
         :param x: N x M x d

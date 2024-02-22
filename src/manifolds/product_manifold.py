@@ -20,7 +20,7 @@ class ProductManifold(Manifold):
         super().__init__(d)
         self.di = di
 
-    def barycentre(self, p, tol=1e-3, max_iter=20):
+    def barycentre(self, p, tol=1e-3, max_iter=20, initialisation=None):
         """
 
         :param p: [N x M x d1, ..., N x M x dn]
@@ -30,7 +30,10 @@ class ProductManifold(Manifold):
         """
         barys = []
         for i in range(self.n):
-            barys.append(self.manifolds[i].barycentre(p[i], tol=1e-3, max_iter=20))
+            if initialisation is None:
+                barys.append(self.manifolds[i].barycentre(p[i], tol=tol, max_iter=max_iter, initialisation=None))
+            else:
+                barys.append(self.manifolds[i].barycentre(p[i], tol=tol, max_iter=max_iter, initialisation=initialisation[i]))
         return barys
 
 

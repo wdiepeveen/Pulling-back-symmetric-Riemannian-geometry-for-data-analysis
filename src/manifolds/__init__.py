@@ -6,14 +6,17 @@ class Manifold:
     def __init__(self, d):
         self.d = d
 
-    def barycentre(self, x, tol=1e-3, max_iter=50):
+    def barycentre(self, x, tol=1e-3, max_iter=50, initialisation=None):
         """
 
         :param x: N x M x Mpoint
         :return: N x Mpoint
         """
         k = 0
-        y = x[:,0]
+        if initialisation is None:
+            y = x[:,0]
+        else:
+            y = initialisation * torch.ones(x.shape[0],1)
         error = self.norm(y, torch.mean(self.log(y, x),1).unsqueeze(-2))
         rel_error = 1.
         while k <= max_iter and rel_error >= tol:
