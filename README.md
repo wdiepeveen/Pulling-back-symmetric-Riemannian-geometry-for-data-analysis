@@ -23,10 +23,10 @@ Reproducing the experiments in [1]
 ----------------------------------
 
 To produce the results in section 6.1 of [1]:
-* Run the jupyter notebook `experiment/curvature_effects/evaluate_curvature_effects.ipynb`
+* Run the jupyter notebook `experiments/curvature_effects/evaluate_curvature_effects.ipynb`
 
 To produce the results in section 6.2 of [1]:
-* Run the jupyter notebook `experiment/diffeomorphism_effects/evaluate_diffeomorphism_effects.ipynb`
+* Run the jupyter notebook `experiments/diffeomorphism_effects/evaluate_diffeomorphism_effects.ipynb`
 * To train each of the four diffeomorphisms, please check out `main_diffeomorphism_effects.py`. For example, to train the diffeomorphism with both subspace and isometry loss (indexed as experiment 0), run:
 ```
     $ python3 main_diffeomorphism_effects.py --exp_no 0
