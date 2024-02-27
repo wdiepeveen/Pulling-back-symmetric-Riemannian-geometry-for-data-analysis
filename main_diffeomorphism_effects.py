@@ -30,10 +30,6 @@ if __name__ == "__main__":
                         help='first beta in Adam optimiser')
     parser.add_argument('--beta_b', type=float, default=0.99,
                         help='second beta in Adam optimiser')
-    # parser.add_argument('--weight_decay', type=float, default=1e-10,
-    #                     help='weight decay')
-    # parser.add_argument('--log', type=eval, default=True,
-    #                     help='logging flag')
     parser.add_argument('--seed', type=int, default=31,
                         help='Random seed')
     parser.add_argument('--val_interval', type=int, default=5, metavar='N',
@@ -41,7 +37,7 @@ if __name__ == "__main__":
 
     # Train settings
     parser.add_argument('--exp_no', type=int, default=0,
-                        help='experiment number')
+                        help='experiment number')  # available no: 0,1,2,3
     parser.add_argument('--a_sub', type=float, default=10.,
                         help='subspace regularisation parameter')
     parser.add_argument('--a_iso', type=float, default=1e-2,
@@ -81,15 +77,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     torch.manual_seed(31)
-
-    # ------------------------ Device settings
-
-    if args.gpus > 0:  # TODO make sure it works for gpus
-        accelerator = "gpu"
-        devices = args.gpus
-    else:
-        accelerator = "cpu"
-        devices = "auto"
 
     # ------------------------ Dataset
 
@@ -194,7 +181,7 @@ if __name__ == "__main__":
 
     # ------------------------ Save results
 
-    trained_networks_path = os.path.join("models", "spiral")
+    trained_networks_path = os.path.join("experiments/diffeomorphism_effects/models", "spiral")
     os.makedirs(trained_networks_path, exist_ok=True)
 
     s_z_path = os.path.join(trained_networks_path, "z.pt")
