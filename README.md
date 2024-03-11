@@ -1,6 +1,6 @@
 # Pulling back symmetric Riemannian geometry for data analysis
 
-    [1] W. Diepeveen, A. Bertozzi.  
+    [1] W. Diepeveen.  
     Pulling back symmetric Riemannian geometry for data analysis
     arXiv preprint arXiv:xxxx.xxxxx. YYYY MM DD.
 
