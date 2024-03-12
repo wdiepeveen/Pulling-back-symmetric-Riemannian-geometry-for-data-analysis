@@ -2,7 +2,7 @@
 
     [1] W. Diepeveen.  
     Pulling back symmetric Riemannian geometry for data analysis
-    arXiv preprint arXiv:xxxx.xxxxx. YYYY MM DD.
+    arXiv preprint arXiv:2403.06612. 2024 03 11.
 
 Setup
 -----
